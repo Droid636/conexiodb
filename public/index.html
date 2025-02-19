@@ -75,39 +75,39 @@
         </tbody>
     </table>
 
-    <!-- Modal para editar -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
-            <h2>Editar Usuario</h2>
-            <form id="editForm" enctype="multipart/form-data">
-                <input type="hidden" name="edit_id" id="edit_id"> <!-- Campo oculto para editar -->
-                
-                <label>Texto:</label>
-                <input type="text" name="edit_text_field" id="edit_text_field" required><br><br>
+   <!-- Modal para editar -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Editar Usuario</h2>
+        <form id="editForm" enctype="multipart/form-data">
+            <input type="hidden" name="edit_id" id="edit_id"> <!-- Campo oculto para el ID -->
+            
+            <label>Texto:</label>
+            <input type="text" name="edit_text_field" id="edit_text_field" required><br><br>
 
-                <label>Contraseña:</label>
-                <input type="password" name="edit_password" id="edit_password" required><br><br>
+            <label>Contraseña:</label>
+            <input type="password" name="edit_password" id="edit_password" required><br><br>
 
-                <label>Imagen:</label>
-                <input type="file" name="edit_image" id="edit_image"><br><br>
+            <label>Imagen:</label>
+            <input type="file" name="edit_image" id="edit_image"><br><br>
 
-                <label>Fecha:</label>
-                <input type="date" name="edit_date_field" id="edit_date_field" required><br><br>
+            <label>Fecha:</label>
+            <input type="date" name="edit_date_field" id="edit_date_field" required><br><br>
 
-                <label>Opinión:</label>
-                <textarea name="edit_opinion" id="edit_opinion"></textarea><br><br>
+            <label>Opinión:</label>
+            <textarea name="edit_opinion" id="edit_opinion"></textarea><br><br>
 
-                <label>Base de datos:</label>
-                <select name="edit_database" id="edit_databaseSelect">
-                    <option value="mysql">MySQL</option>
-                    <option value="mongodb">MongoDB</option>
-                </select><br><br>
+            <label>Base de datos:</label>
+            <select name="edit_database" id="edit_databaseSelect">
+                <option value="mysql">MySQL</option>
+                <option value="mongodb">MongoDB</option>
+            </select><br><br>
 
-                <button type="submit">Guardar Cambios</button>
-            </form>
-        </div>
+            <button type="submit">Guardar Cambios</button>
+        </form>
     </div>
+</div>
 
     <script>
         // Funciones para abrir y cerrar el modal de edición
@@ -152,31 +152,42 @@
 
         // Evento para enviar el formulario de edición
         document.getElementById("editForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const database = document.getElementById("edit_databaseSelect").value;
-            formData.append("simple_db", database);
+    event.preventDefault();
 
-            const userId = document.getElementById("edit_id").value;
-            const url = `/update-user/${userId}`; // Siempre actualizar en edición
-            const method = "PUT";
+    const formData = new FormData(this);
+    const database = document.getElementById("edit_databaseSelect").value;
+    formData.append("database", database);
 
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    body: formData
-                });
+    const userId = document.getElementById("edit_id").value;
 
-                const result = await response.json();
-                alert(result.message);
+    console.log("Datos enviados:", {
+        text_field: document.getElementById("edit_text_field").value,
+        password: document.getElementById("edit_password").value,
+        date_field: document.getElementById("edit_date_field").value,
+        opinion: document.getElementById("edit_opinion").value,
+        database: database
+    });
 
-                closeEditModal();
-                fetchUsers(database);
-            } catch (error) {
-                console.error("❌ Error al actualizar usuario:", error);
-                alert("Error al actualizar el usuario.");
-            }
+    try {
+        const response = await fetch(`/update-user/${userId}`, {
+            method: "PUT",
+            body: formData
         });
+
+        if (!response.ok) {
+            throw new Error("Error al actualizar el usuario: " + response.statusText);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+
+        closeEditModal(); // Cerrar el modal después de actualizar
+        fetchUsers(database); // Actualizar la lista de usuarios
+    } catch (error) {
+        console.error("❌ Error al actualizar usuario:", error);
+        alert("Error al actualizar el usuario.");
+    }
+});
 
         // Función para cargar la lista de usuarios
         async function fetchUsers(database = "mysql") {
@@ -212,23 +223,30 @@
 
         // Función para cargar datos en el modal de edición
         async function editUser(userId) {
-            try {
-                const response = await fetch(`/get-user/${userId}`);
-                const user = await response.json();
-
-                document.getElementById("edit_id").value = userId;
-                document.getElementById("edit_text_field").value = user.text_field;
-                document.getElementById("edit_password").value = user.password;
-                document.getElementById("edit_date_field").value = user.date_field ? new Date(user.date_field).toISOString().split('T')[0] : "";
-                document.getElementById("edit_opinion").value = user.opinion || "";
-                document.getElementById("edit_databaseSelect").value = user.database || "mysql";
-                
-                openEditModal(); // Abrir el modal de edición
-            } catch (error) {
-                console.error("❌ Error al obtener usuario:", error);
-                alert("Error al cargar los datos del usuario.");
-            }
+    try {
+        const database = document.getElementById("databaseSelect").value;
+        const response = await fetch(`/get-user/${userId}?database=${database}`);
+        if (!response.ok) {
+            throw new Error("Error al obtener el usuario: " + response.statusText);
         }
+
+        const user = await response.json();
+        console.log("Datos del usuario:", user);
+
+        // Llenar el formulario del modal con los datos del usuario
+        document.getElementById("edit_id").value = userId;
+        document.getElementById("edit_text_field").value = user.text_field;
+        document.getElementById("edit_password").value = user.password;
+        document.getElementById("edit_date_field").value = user.date_field ? new Date(user.date_field).toISOString().split('T')[0] : "";
+        document.getElementById("edit_opinion").value = user.opinion || "";
+        document.getElementById("edit_databaseSelect").value = user.database || "mysql";
+
+        openEditModal(); // Abrir el modal de edición
+    } catch (error) {
+        console.error("❌ Error al obtener usuario:", error);
+        alert("Error al cargar los datos del usuario.");
+    }
+}
 
         // Función para eliminar un usuario
         async function deleteUser(userId, database) {

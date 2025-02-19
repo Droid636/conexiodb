@@ -96,6 +96,39 @@ app.get("/get-users", async (req, res) => {
     }
 });
 
+// 📌 Ruta para obtener un usuario específico (para editar)
+app.get("/get-user/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id)
+        const { database } = req.query;
+
+        if (database === "mysql") {
+            const query = "SELECT * FROM users WHERE id = ?";
+            mysqlConnection.query(query, [id], (err, result) => {
+                if (err) {
+                    console.error("❌ Error obteniendo usuario de MySQL:", err);
+                    return res.status(500).json({ message: "Error en MySQL" });
+                }
+                if (result.length === 0) {
+                    return res.status(404).json({ message: "Usuario no encontrado en MySQL" });
+                }
+                res.json(result[0]);
+            });
+        } else if (database === "mongodb") {
+            const user = await UserModel.findById(id);
+            if (!user) return res.status(404).json({ message: "Usuario no encontrado en MongoDB" });
+
+            res.json(user);
+        } else {
+            res.status(400).json({ message: "Base de datos no especificada" });
+        }
+    } catch (error) {
+        console.error("❌ Error en el servidor:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+});
+
 // 📌 Ruta para actualizar usuario
 app.put("/update-user/:id", upload.single("image"), async (req, res) => {
     try {
