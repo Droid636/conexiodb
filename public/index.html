@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+</head>
+<body>
+    <h2>Formulario de Registro</h2>
+    <form id="registerForm" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="id"> <!-- Campo oculto para editar -->
+        
+        <label>Texto:</label>
+        <input type="text" name="text_field" id="text_field" required><br><br>
+
+        <label>Contraseña:</label>
+        <input type="password" name="password" id="password" required><br><br>
+
+        <label>Imagen:</label>
+        <input type="file" name="image" id="image"><br><br>
+
+        <label>Fecha:</label>
+        <input type="date" name="date_field" id="date_field" required><br><br>
+
+        <label>Opinión:</label>
+        <textarea name="opinion" id="opinion"></textarea><br><br>
+
+        <label>Base de datos:</label>
+        <select name="database" id="databaseSelect">
+            <option value="mysql">MySQL</option>
+            <option value="mongodb">MongoDB</option>
+        </select><br><br>
+
+        <button type="submit">Registrar</button>
+    </form>
+
+    <h2>Lista de Usuarios Registrados</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Contraseña</th>
+                <th>Imagen</th>
+                <th>Fecha</th>
+                <th>Comentario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="usersTable">
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const database = document.getElementById("databaseSelect").value;
+            formData.append("simple_db", database);
+
+            const Id = document.getElementById("id").value;
+            const url = Id ? `/update-user/${userId}` : "/register"; // Si hay ID, actualizar
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                alert(result.message);
+
+                document.getElementById("registerForm").reset();
+                document.getElementById("id").value = ""; // Limpiar ID después de editar
+                fetchUsers(database);
+            } catch (error) {
+                console.error("❌ Error en el registro:", error);
+                alert("Error al registrar usuario.");
+            }
+        });
+
+        async function fetchUsers(database = "mysql") {
+            try {
+                const response = await fetch(`/get-users?database=${database}`);
+                const users = await response.json();
+
+                const tableBody = document.getElementById("usersTable");
+                tableBody.innerHTML = "";
+
+                users.forEach(user => {
+                    const imageTag = user.image ? `<img src="/uploads/${user.image}" width="50">` : "Sin imagen";
+                    
+                    const row = `<tr>
+                        <td>${user.id || user.id}</td>
+                        <td>${user.text_field}</td>
+                        <td>${user.password}</td>
+                        <td>${imageTag}</td>
+                        <td>${user.date_field ? new Date(user.date_field).toLocaleDateString() : "N/A"}</td>
+                        <td>${user.opinion || "N/A"}</td>
+                        <td>
+                            <button onclick="editUser('${user.id || user._id}')">✏️ Editar</button>
+                            <button onclick="deleteUser('${user.id || user._id}')">🗑️ Eliminar</button>
+                        </td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("❌ Error al cargar usuarios:", error);
+                alert("Error al cargar la lista de usuarios.");
+            }
+        }
+
+        async function editUser(userId) {
+            try {
+                const response = await fetch(`/get-user/${userId}`);
+                const user = await response.json();
+
+                document.getElementById("id").value = userId;
+                document.getElementById("text_field").value = user.text_field;
+                document.getElementById("password").value = user.password;
+                document.getElementById("date_field").value = user.date_field ? new Date(user.date_field).toISOString().split('T')[0] : "";
+                document.getElementById("opinion").value = user.opinion || "";
+                document.getElementById("databaseSelect").value = "simple_db"; // Ajusta si es necesario
+                
+                alert("Editando usuario: " + user.text_field);
+            } catch (error) {
+                console.error("❌ Error al obtener usuario:", error);
+                alert("Error al cargar los datos del usuario.");
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
+
+            try {
+                const response = await fetch(`/delete-user/${userId}`, {
+                    method: "DELETE"
+                });
+
+                const result = await response.json();
+                alert(result.message);
+
+                fetchUsers();
+            } catch (error) {
+                console.error("❌ Error al eliminar usuario:", error);
+                alert("Error al eliminar el usuario.");
+            }
+        }
+
+        document.getElementById("databaseSelect").addEventListener("change", function() {
+            fetchUsers(this.value);
+        });
+
+        fetchUsers();
+    </script>
+</body>
+</html>
