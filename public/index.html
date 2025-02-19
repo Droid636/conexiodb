@@ -58,12 +58,13 @@
             const database = document.getElementById("databaseSelect").value;
             formData.append("simple_db", database);
 
-            const Id = document.getElementById("id").value;
-            const url = Id ? `/update-user/${userId}` : "/register"; // Si hay ID, actualizar
+            const userId = document.getElementById("id").value;
+            const url = userId ? `/update-user/${userId}` : "/register"; // Si hay ID, actualizar
+            const method = userId ? "PUT" : "POST";
 
             try {
                 const response = await fetch(url, {
-                    method: "POST",
+                    method: method,
                     body: formData
                 });
 
@@ -91,7 +92,7 @@
                     const imageTag = user.image ? `<img src="/uploads/${user.image}" width="50">` : "Sin imagen";
                     
                     const row = `<tr>
-                        <td>${user.id || user.id}</td>
+                        <td>${user.id || user._id}</td>
                         <td>${user.text_field}</td>
                         <td>${user.password}</td>
                         <td>${imageTag}</td>
@@ -99,7 +100,7 @@
                         <td>${user.opinion || "N/A"}</td>
                         <td>
                             <button onclick="editUser('${user.id || user._id}')">✏️ Editar</button>
-                            <button onclick="deleteUser('${user.id || user._id}')">🗑️ Eliminar</button>
+                            <button onclick="deleteUser('${user.id || user._id}', '${database}')">🗑️ Eliminar</button>
                         </td>
                     </tr>`;
                     tableBody.innerHTML += row;
@@ -120,7 +121,7 @@
                 document.getElementById("password").value = user.password;
                 document.getElementById("date_field").value = user.date_field ? new Date(user.date_field).toISOString().split('T')[0] : "";
                 document.getElementById("opinion").value = user.opinion || "";
-                document.getElementById("databaseSelect").value = "simple_db"; // Ajusta si es necesario
+                document.getElementById("databaseSelect").value = user.database || "mysql";
                 
                 alert("Editando usuario: " + user.text_field);
             } catch (error) {
@@ -129,18 +130,18 @@
             }
         }
 
-        async function deleteUser(userId) {
+        async function deleteUser(userId, database) {
             if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
 
             try {
-                const response = await fetch(`/delete-user/${userId}`, {
+                const response = await fetch(`/delete-user/${userId}?database=${database}`, {
                     method: "DELETE"
                 });
 
                 const result = await response.json();
                 alert(result.message);
 
-                fetchUsers();
+                fetchUsers(database);
             } catch (error) {
                 console.error("❌ Error al eliminar usuario:", error);
                 alert("Error al eliminar el usuario.");

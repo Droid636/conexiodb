@@ -18,7 +18,7 @@ app.use("/uploads", express.static("uploads")); // Servir imágenes
 const storage = multer.diskStorage({
     destination: "./uploads/",
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, Date.now() + path.extname(file.originalname)); // Nombre único para el archivo
     }
 });
 const upload = multer({ storage });
@@ -104,12 +104,21 @@ app.put("/update-user/:id", upload.single("image"), async (req, res) => {
         const { text_field, password, date_field, opinion } = req.body;
         const image = req.file ? req.file.filename : null;
 
+        console.log("📥 Datos recibidos para actualizar:", { id, database, text_field, password, date_field, opinion, image });
+
+        if (!text_field || !password) {
+            return res.status(400).json({ message: "Los campos text_field y password son obligatorios" });
+        }
+
         if (database === "mysql") {
             const query = "UPDATE users SET text_field = ?, password = ?, image = ?, date_field = ?, opinion = ? WHERE id = ?";
             mysqlConnection.query(query, [text_field, password, image, date_field, opinion, id], (err, result) => {
                 if (err) {
                     console.error("❌ Error al actualizar en MySQL:", err);
                     return res.status(500).json({ message: "Error en MySQL" });
+                }
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({ message: "Usuario no encontrado en MySQL" });
                 }
                 res.json({ message: "Usuario actualizado en MySQL" });
             });
@@ -123,7 +132,7 @@ app.put("/update-user/:id", upload.single("image"), async (req, res) => {
             if (image) updateData.image = image;
 
             const updatedUser = await UserModel.findByIdAndUpdate(id, updateData, { new: true });
-            if (!updatedUser) return res.status(404).json({ message: "Usuario no encontrado" });
+            if (!updatedUser) return res.status(404).json({ message: "Usuario no encontrado en MongoDB" });
 
             res.json({ message: "Usuario actualizado en MongoDB" });
         } else {
@@ -148,11 +157,14 @@ app.delete("/delete-user/:id", async (req, res) => {
                     console.error("❌ Error al eliminar en MySQL:", err);
                     return res.status(500).json({ message: "Error en MySQL" });
                 }
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({ message: "Usuario no encontrado en MySQL" });
+                }
                 res.json({ message: "Usuario eliminado de MySQL" });
             });
         } else if (database === "mongodb") {
             const deletedUser = await UserModel.findByIdAndDelete(id);
-            if (!deletedUser) return res.status(404).json({ message: "Usuario no encontrado" });
+            if (!deletedUser) return res.status(404).json({ message: "Usuario no encontrado en MongoDB" });
 
             res.json({ message: "Usuario eliminado de MongoDB" });
         } else {
