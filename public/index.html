@@ -156,7 +156,7 @@
 
     const formData = new FormData(this);
     const database = document.getElementById("edit_databaseSelect").value;
-    formData.append("database", database);
+    formData.append("simple_db", database);
 
     const userId = document.getElementById("edit_id").value;
 
@@ -271,6 +271,8 @@
         document.getElementById("databaseSelect").addEventListener("change", function() {
             fetchUsers(this.value);
         });
+        
+        
 
         // Cargar usuarios al inicio
         fetchUsers();

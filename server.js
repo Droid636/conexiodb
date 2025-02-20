@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads")); // Servir imágenes
 
+
 // 📸 Configuración de Multer para subir imágenes
 const storage = multer.diskStorage({
     destination: "./uploads/",
@@ -130,52 +131,34 @@ app.get("/get-user/:id", async (req, res) => {
 });
 
 // 📌 Ruta para actualizar usuario
-app.put("/update-user/:id", upload.single("image"), async (req, res) => {
+app.put("/update-user/:id", upload.single("edit_image"), async (req, res) => {
     try {
-        const { database } = req.body;
-        const { id } = req.params;
-        const { text_field, password, date_field, opinion } = req.body;
+        const { text_field, password, date_field, opinion, database } = req.body;
         const image = req.file ? req.file.filename : null;
 
-        console.log("📥 Datos recibidos para actualizar:", { id, database, text_field, password, date_field, opinion, image });
-
-        if (!text_field || !password) {
-            return res.status(400).json({ message: "Los campos text_field y password son obligatorios" });
-        }
-
         if (database === "mysql") {
-            const query = "UPDATE users SET text_field = ?, password = ?, image = ?, date_field = ?, opinion = ? WHERE id = ?";
-            mysqlConnection.query(query, [text_field, password, image, date_field, opinion, id], (err, result) => {
-                if (err) {
-                    console.error("❌ Error al actualizar en MySQL:", err);
-                    return res.status(500).json({ message: "Error en MySQL" });
-                }
-                if (result.affectedRows === 0) {
-                    return res.status(404).json({ message: "Usuario no encontrado en MySQL" });
-                }
+            const query = "UPDATE users SET text_field=?, password=?, image=?, date_field=?, opinion=? WHERE id=?";
+            mysqlConnection.query(query, [text_field, password, image, date_field, opinion, req.params.id], (err, result) => {
+                if (err) return res.status(500).json({ message: "Error en MySQL" });
                 res.json({ message: "Usuario actualizado en MySQL" });
             });
         } else if (database === "mongodb") {
-            const updateData = {
+            const updatedUser = await UserModel.findByIdAndUpdate(req.params.id, {
                 text_field,
                 password,
+                image,
                 date_field: date_field ? new Date(date_field) : null,
                 opinion
-            };
-            if (image) updateData.image = image;
-
-            const updatedUser = await UserModel.findByIdAndUpdate(id, updateData, { new: true });
-            if (!updatedUser) return res.status(404).json({ message: "Usuario no encontrado en MongoDB" });
-
-            res.json({ message: "Usuario actualizado en MongoDB" });
+            }, { new: true });
+            res.json({ message: "Usuario actualizado en MongoDB", updatedUser });
         } else {
             res.status(400).json({ message: "Base de datos no especificada" });
         }
     } catch (error) {
-        console.error("❌ Error en el servidor:", error);
         res.status(500).json({ message: "Error interno del servidor" });
     }
 });
+
 
 // 📌 Ruta para eliminar usuario
 app.delete("/delete-user/:id", async (req, res) => {
