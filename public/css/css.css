@@ -1,0 +1,357 @@
+/*cuerpo html*/
+@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+body{
+    font-family: 'Exo', sans-serif;
+}
+
+
+.context {
+    width: 100%;
+    height: 100vh; /* Cubre toda la pantalla */
+    position: absolute;
+    top: 0; /* Ajusta la posición vertical */
+    left: 0;
+    z-index: -1; /* Asegura que esté detrás del contenido */
+}
+
+.context h1{
+    text-align: center;
+    color: #fff;
+    font-size: 50px;
+}
+
+
+.area{
+    background: #4e54c8;  
+    background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
+    width: 100%;
+    height:100vh;
+    
+   
+}
+
+.circles{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.circles li{
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    animation: animate 25s linear infinite;
+    bottom: -150px;
+    
+}
+
+.circles li:nth-child(1){
+    left: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+}
+
+
+.circles li:nth-child(2){
+    left: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 2s;
+    animation-duration: 12s;
+}
+
+.circles li:nth-child(3){
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 4s;
+}
+
+.circles li:nth-child(4){
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 18s;
+}
+
+.circles li:nth-child(5){
+    left: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+}
+
+.circles li:nth-child(6){
+    left: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 3s;
+}
+
+.circles li:nth-child(7){
+    left: 35%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 7s;
+}
+
+.circles li:nth-child(8){
+    left: 50%;
+    width: 25px;
+    height: 25px;
+    animation-delay: 15s;
+    animation-duration: 45s;
+}
+
+.circles li:nth-child(9){
+    left: 20%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 2s;
+    animation-duration: 35s;
+}
+
+.circles li:nth-child(10){
+    left: 85%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0s;
+    animation-duration: 11s;
+}
+
+
+
+@keyframes animate {
+
+    0%{
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+
+    100%{
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+
+}
+
+/* Estilos del modal principal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    background-color: rgba(209, 206, 206, 0.5); /* Color de fondo más claro y transparente */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px; /* Ancho original, o ajusta según diseño */
+    position: relative;
+    
+}
+
+/* Estilos del modal diseño (adaptados) */
+.modalmask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,0.8);
+    opacity:0;
+    -webkit-transition: opacity 400ms ease-in;
+    -moz-transition: opacity 400ms ease-in;
+    transition: opacity 400ms ease-in;
+    pointer-events: none;
+    z-index: 99998;
+   
+}
+
+.modal:target .modalmask {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modalbox {
+    width: 400px; /* Ancho deseado */
+    border-radius:3px;
+    -webkit-transition: all 500ms ease-in;
+    -moz-transition: all 500ms ease-in;
+    transition: all 500ms ease-in;
+    
+    /* Otros estilos que desees para el contenido del modal */
+}
+
+.modal:target .modal-content {
+    margin: 10% auto; /* Centrado vertical */
+}
+
+.close {
+    background: #606061;
+    color: #FFFFFF;
+    line-height: 25px;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    width: 24px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius:3px;
+    cursor: pointer;
+}
+
+.close:hover {
+    background: #f62525;
+    color:#222;
+}
+
+/* Estilos adicionales para el formulario (opcional) */
+#editForm label {
+    display: block; /* Etiquetas en bloque */
+    margin-bottom: 5px;
+}
+
+#editForm input,
+#editForm textarea,
+#editForm select {
+    width: calc(100% - 10px); /* Ajusta el ancho de los campos */
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box; /* Para que el padding no afecte el ancho total */
+}
+
+#editForm button.guardar{
+    color: #f3f5f9;
+    background-color: #3468ed;
+    border: 2px solid rgb(19, 13, 16);
+    border-radius: 30px;
+    padding: 15px 10px;
+    display: inline-block;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 0 #44ec4d;
+    -webkit-transition: ease-out 0.4s;
+    -moz-transition: ease-out 0.4s;
+    transition: ease-out 0.4s;
+}
+
+#editForm button.guardar:hover{
+    box-shadow: inset 400px 0 0 0 #44ec4d;
+    color: black;
+}
+
+  /* Estilos para la tabla */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/*boton guardar modal*/
+
+
+
+/*estilo botones editar*/
+button.ed{
+    color: #f3f5f9;
+    background-color: #3468ed;
+    border: 2px solid rgb(19, 13, 16);
+    border-radius: 30px;
+    padding: 18px 36px;
+    display: inline-block;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 0 #44ec4d;
+    -webkit-transition: ease-out 0.4s;
+    -moz-transition: ease-out 0.4s;
+    transition: ease-out 0.4s;
+}
+button.xd:hover{
+    box-shadow: inset 400px 0 0 0 #44ec4d;
+    color: black;
+}
+
+/*estilo botones eliminar*/
+button.de{
+    color: #f3f5f9;
+    background-color: #3468ed;
+    border: 2px solid rgb(19, 13, 16);
+    border-radius: 30px;
+    padding: 18px 36px;
+    display: inline-block;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 0 #eb2d2d;
+    -webkit-transition: ease-out 0.4s;
+    -moz-transition: ease-out 0.4s;
+    transition: ease-out 0.4s;
+}
+button.cd:hover{
+    box-shadow: inset 400px 0 0 0 #eb2d2d;
+    color: rgb(255, 255, 255);
+}
+
+h2{
+    text-align: center;
+    color: #ffffff;
+}
+
+.fr{
+    text-align: left;
+}
+
+/* formulario*/
+
+/*formulario*/

@@ -1,3 +1,4 @@
+//server.js
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -130,35 +131,51 @@ app.get("/get-user/:id", async (req, res) => {
     }
 });
 
-// 📌 Ruta para actualizar usuario
+//actualizar modongo
+
 app.put("/update-user/:id", upload.single("edit_image"), async (req, res) => {
     try {
-        const { text_field, password, date_field, opinion, database } = req.body;
-        const image = req.file ? req.file.filename : null;
+        const { edit_text_field, edit_password, edit_date_field, edit_opinion, database } = req.body;
+        const edit_image = req.file ? req.file.filename : null;
 
         if (database === "mysql") {
             const query = "UPDATE users SET text_field=?, password=?, image=?, date_field=?, opinion=? WHERE id=?";
-            mysqlConnection.query(query, [text_field, password, image, date_field, opinion, req.params.id], (err, result) => {
+            mysqlConnection.query(query, [edit_text_field, edit_password, edit_image, edit_date_field, edit_opinion, req.params.id], (err, result) => {
                 if (err) return res.status(500).json({ message: "Error en MySQL" });
                 res.json({ message: "Usuario actualizado en MySQL" });
             });
         } else if (database === "mongodb") {
-            const updatedUser = await UserModel.findByIdAndUpdate(req.params.id, {
-                text_field,
-                password,
-                image,
-                date_field: date_field ? new Date(date_field) : null,
-                opinion
-            }, { new: true });
+            const updateData = {
+                text_field: edit_text_field,
+                password: edit_password,
+                date_field: edit_date_field ? new Date(edit_date_field) : null,
+                opinion: edit_opinion
+            };
+
+            // actualizar imagen si no hay xd
+            if (edit_image) {
+                updateData.image = edit_image;
+            }
+
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                req.params.id,
+                updateData,
+                { new: true }
+            );
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: "Usuario no encontrado en MongoDB" });
+            }
+
             res.json({ message: "Usuario actualizado en MongoDB", updatedUser });
         } else {
             res.status(400).json({ message: "Base de datos no especificada" });
         }
     } catch (error) {
+        console.error("Error en la actualización:", error);
         res.status(500).json({ message: "Error interno del servidor" });
     }
 });
-
 
 // 📌 Ruta para eliminar usuario
 app.delete("/delete-user/:id", async (req, res) => {
