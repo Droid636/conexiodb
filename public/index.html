@@ -17,35 +17,35 @@
                     <li></li>
                     <li></li>
                     <li></li>
-                    <h2 class="fr">Formulario de Registro</h2>
+                    <h2 class="fr">FORMULARIO DE REGISTRO</h2>
     <form id="registerForm" enctype="multipart/form-data">
         <input type="hidden" name="id" id="id"> <!-- Campo oculto para editar -->
         
-        <label>Texto:</label>
+        <label class="txt">Texto:</label>
         <input type="text" name="text_field" id="text_field" required><br><br>
 
-        <label>Contraseña:</label>
+        <label class="txt">Contraseña:</label>
         <input type="password" name="password" id="password" required onkeydown="avoidSpaces(event)"><br><br>
 
-        <label>Imagen:</label>
+        <label class="txt">Imagen:</label>
         <input type="file" name="image" id="image"><br><br>
 
-        <label>Fecha:</label>
+        <label class="txt">Fecha:</label>
         <input type="date" name="date_field" id="date_field" required><br><br>
 
-        <label>Opinión:</label>
+        <label class="txt">Opinión:</label>
         <textarea name="opinion" id="opinion"></textarea><br><br>
 
-        <label>Base de datos:</label>
+        <label class="txt">Base de datos:</label>
         <select name="database" id="databaseSelect">
             <option value="mysql">MySQL</option>
             <option value="mongodb">MongoDB</option>
         </select><br><br>
 
-        <button type="submit">Registrar</button>
+        <button class="regis" type="submit">Registrar</button>
     </form>
 
-    <h2>Lista de Usuarios Registrados</h2>
+    <h2 class="liur">LISTA DE USUARIOS REGISTRADOS</h2>
     <table border="1">
         <thead>
             <tr>
@@ -66,7 +66,7 @@
    <div id="editModal" class="modal">
     <div class="modalmask"></div> <div class="modal-content modalbox">
         <span class="close" onclick="closeEditModal()">&times;</span>
-        <h2>Editar Usuario</h2>
+        <h2 class="edu">Editar Usuario</h2>
         <form id="editForm" enctype="multipart/form-data">
             <input type="hidden" name="edit_id" id="edit_id">
 

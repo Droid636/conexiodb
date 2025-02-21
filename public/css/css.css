@@ -28,7 +28,7 @@ body{
 
 
 .area{
-    background: #4e54c8;  
+    background: #1a2e4b;  
     background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
     width: 100%;
     height:100vh;
@@ -166,12 +166,15 @@ body{
 }
 
 .modal-content {
-    background-color: white;
+    background-color: #F0E4D6;
     padding: 20px;
     border-radius: 5px;
     width: 300px; /* Ancho original, o ajusta según diseño */
     position: relative;
     
+}
+.edu{
+    color:#1C2E4A;
 }
 
 /* Estilos del modal diseño (adaptados) */
@@ -226,7 +229,7 @@ body{
 }
 
 .close:hover {
-    background: #f62525;
+    background: #f81818ab;
     color:#222;
 }
 
@@ -248,24 +251,24 @@ body{
 }
 
 #editForm button.guardar{
-    color: #f3f5f9;
-    background-color: #3468ed;
+    color: #F0E4D6;
+    background-color: #1C2E4A;
     border: 2px solid rgb(19, 13, 16);
     border-radius: 30px;
-    padding: 15px 10px;
+    padding: 25px 25px;
     display: inline-block;
     font-family: "Lucida Console", Monaco, monospace;
-    font-size: 10px;
+    font-size: 15px;
     letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: inset 0 0 0 0 #44ec4d;
+    box-shadow: inset 0 0 0 0 #38ecd168;
     -webkit-transition: ease-out 0.4s;
     -moz-transition: ease-out 0.4s;
     transition: ease-out 0.4s;
 }
 
 #editForm button.guardar:hover{
-    box-shadow: inset 400px 0 0 0 #44ec4d;
+    box-shadow: inset 400px 0 0 0 #38ecd168;
     color: black;
 }
 
@@ -274,9 +277,10 @@ body{
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
-    background: #fff;
+    background: #F0E4D6;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
 }
 
 th, td {
@@ -286,8 +290,8 @@ th, td {
 }
 
 th {
-    background-color: #007bff;
-    color: white;
+    background-color: #C0D0EF;
+    color: #1C2E4A;
     font-weight: 600;
 }
 
@@ -301,8 +305,8 @@ tr:hover {
 
 /*estilo botones editar*/
 button.ed{
-    color: #f3f5f9;
-    background-color: #3468ed;
+    color: #F0E4D6;
+    background-color: #1C2E4A;
     border: 2px solid rgb(19, 13, 16);
     border-radius: 30px;
     padding: 18px 36px;
@@ -311,20 +315,20 @@ button.ed{
     font-size: 12px;
     letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: inset 0 0 0 0 #44ec4d;
+    box-shadow: inset 0 0 0 0 #38ecd168;
     -webkit-transition: ease-out 0.4s;
     -moz-transition: ease-out 0.4s;
     transition: ease-out 0.4s;
 }
 button.xd:hover{
-    box-shadow: inset 400px 0 0 0 #44ec4d;
+    box-shadow: inset 400px 0 0 0 #38ecd168;
     color: black;
 }
 
 /*estilo botones eliminar*/
 button.de{
-    color: #f3f5f9;
-    background-color: #3468ed;
+    color: #F0E4D6;
+    background-color: #1C2E4A;
     border: 2px solid rgb(19, 13, 16);
     border-radius: 30px;
     padding: 18px 36px;
@@ -333,13 +337,13 @@ button.de{
     font-size: 12px;
     letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: inset 0 0 0 0 #eb2d2d;
+    box-shadow: inset 0 0 0 0 #fa310ead;
     -webkit-transition: ease-out 0.4s;
     -moz-transition: ease-out 0.4s;
     transition: ease-out 0.4s;
 }
 button.cd:hover{
-    box-shadow: inset 400px 0 0 0 #eb2d2d;
+    box-shadow: inset 400px 0 0 0 #fa310ead;
     color: rgb(255, 255, 255);
 }
 
@@ -349,9 +353,49 @@ h2{
 }
 
 .fr{
-    text-align: left;
+    text-align: center;
+    color: #ccbaa5d7;
+    font-size: 35px;
 }
 
 /* formulario*/
+/*registro*/
+.regis{
+    color: #1C2E4A;
+    background-color: #F0E4D6;
+    border: 2px solid rgb(19, 13, 16);
+    border-radius: 30px;
+    padding: 18px 36px;
+    display: inline-block;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 0 #BDC4d4;
+    -webkit-transition: ease-out 0.4s;
+    -moz-transition: ease-out 0.4s;
+    transition: ease-out 0.4s;
+}
+.regis:hover{
+    box-shadow: inset 400px 0 0 0 #BDC4d4;
+    color: black;
+}
 
+.context{
+    text-align: center;
+}
+
+.liur{
+    margin-top: 30px;
+    color: #ccbaa5d7;
+    font-size: 35px;
+}
+.txt{
+    color: #D1cfc9;
+    font-size: 20px;
+    font-family: "Lucida Console", Monaco, monospace;
+}
 /*formulario*/
+
+/*alert*/
+/*alert*/
