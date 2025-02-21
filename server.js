@@ -234,8 +234,3 @@ app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
-Swal.fire({
-    title: "Good job!",
-    text: "You clicked the button!",
-    icon: "success"
-  });

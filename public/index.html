@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/css.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <title>Registro</title>
 
 </head>
@@ -23,7 +24,7 @@
                             <input type="hidden" name="id" id="id"> <!-- Campo oculto para editar -->
                             
                             <label class="txt">Texto:</label>
-                            <input type="text" name="text_field" id="text_field" required><br><br>
+                            <input type="text" name="text_field" id="text_field" required onkeydown="avoidSpaces(event)"><br><br>
                     
                             <label class="txt">Contraseña:</label>
                             <input type="password" name="password" id="password" required onkeydown="avoidSpaces(event)"><br><br>
@@ -35,7 +36,7 @@
                             <input type="date" name="date_field" id="date_field" required><br><br>
                     
                             <label class="txt">Opinión:</label>
-                            <textarea name="opinion" id="opinion"></textarea><br><br>
+                            <textarea name="opinion" id="opinion" onkeydown="avoidSpaces(event)"></textarea><br><br>
                     
                             <label class="txt">Base de datos:</label>
                             <select name="database" id="databaseSelect">
@@ -74,7 +75,7 @@
             <input type="hidden" name="edit_id" id="edit_id">
 
             <label>Texto:</label>
-            <input type="text" name="edit_text_field" id="edit_text_field" required><br><br>
+            <input type="text" name="edit_text_field" id="edit_text_field" required onkeydown="avoidSpaces(event)"><br><br>
 
             <label>Contraseña:</label>
             <input type="password" name="edit_password" id="edit_password" required onkeydown="avoidSpaces(event)"><br><br>
@@ -86,7 +87,7 @@
             <input type="date" name="edit_date_field" id="edit_date_field" required><br><br>
 
             <label>Opinión:</label>
-            <textarea name="edit_opinion" id="edit_opinion"></textarea><br><br>
+            <textarea name="edit_opinion" id="edit_opinion" onkeydown="avoidSpaces(event)"></textarea><br><br>
 
             <label>Base de datos:</label>
             <select name="edit_database" id="edit_databaseSelect">
@@ -116,7 +117,7 @@
         event.preventDefault(); // Evita que se ingrese el espacio
         Swal.fire({
              title: "Error!",
-             text: "La contraseña no puede tener espacios",
+             text: "El camppo no puede tener espacios",
              icon: "warning"
     });
     }
@@ -133,11 +134,24 @@
         }
 
         // Evento para enviar el formulario de registro
+        
         document.getElementById("registerForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+                event.preventDefault();
+            const text_field = document.getElementById("text_field").value.trim(); // Obtener valor y eliminar espacios en blanco
+                const password = document.getElementById("password").value.trim();    // Obtener valor y eliminar espacios en blanco
+
+                if (text_field === "" || password === "") { // Verificar si los campos están vacíos
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Los campos Texto y Contraseña son obligatorios.",
+                        icon: "warning"
+                    });
+                    return; // Detener el envío del formulario
+                }
             const formData = new FormData(this);
             const database = document.getElementById("databaseSelect").value;
             formData.append("simple_db", database);
+            
 
             const userId = document.getElementById("id").value;
             const url = userId ? `/update-user/${userId}` : "/register"; // Si hay ID, actualizar
