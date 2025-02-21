@@ -18,34 +18,37 @@
                     <li></li>
                     <li></li>
                     <h2 class="fr">FORMULARIO DE REGISTRO</h2>
-    <form id="registerForm" enctype="multipart/form-data">
-        <input type="hidden" name="id" id="id"> <!-- Campo oculto para editar -->
-        
-        <label class="txt">Texto:</label>
-        <input type="text" name="text_field" id="text_field" required><br><br>
+                    <div  class="form-container">
+                        <form id="registerForm" enctype="multipart/form-data">
+                            <input type="hidden" name="id" id="id"> <!-- Campo oculto para editar -->
+                            
+                            <label class="txt">Texto:</label>
+                            <input type="text" name="text_field" id="text_field" required><br><br>
+                    
+                            <label class="txt">Contraseña:</label>
+                            <input type="password" name="password" id="password" required onkeydown="avoidSpaces(event)"><br><br>
+                    
+                            <label class="txt">Imagen:</label>
+                            <input type="file" name="image" id="image"><br><br>
+                    
+                            <label class="txt">Fecha:</label>
+                            <input type="date" name="date_field" id="date_field" required><br><br>
+                    
+                            <label class="txt">Opinión:</label>
+                            <textarea name="opinion" id="opinion"></textarea><br><br>
+                    
+                            <label class="txt">Base de datos:</label>
+                            <select name="database" id="databaseSelect">
+                                <option value="mysql">MySQL</option>
+                                <option value="mongodb">MongoDB</option>
+                            </select><br><br>
+                    
+                            <button class="regis" type="submit">Registrar</button>
+                        </form>
+                    </div>
+    
 
-        <label class="txt">Contraseña:</label>
-        <input type="password" name="password" id="password" required onkeydown="avoidSpaces(event)"><br><br>
-
-        <label class="txt">Imagen:</label>
-        <input type="file" name="image" id="image"><br><br>
-
-        <label class="txt">Fecha:</label>
-        <input type="date" name="date_field" id="date_field" required><br><br>
-
-        <label class="txt">Opinión:</label>
-        <textarea name="opinion" id="opinion"></textarea><br><br>
-
-        <label class="txt">Base de datos:</label>
-        <select name="database" id="databaseSelect">
-            <option value="mysql">MySQL</option>
-            <option value="mongodb">MongoDB</option>
-        </select><br><br>
-
-        <button class="regis" type="submit">Registrar</button>
-    </form>
-
-    <h2 class="liur">LISTA DE USUARIOS REGISTRADOS</h2>
+        <h2 class="liur">LISTA DE USUARIOS REGISTRADOS</h2>
     <table border="1">
         <thead>
             <tr>
@@ -106,12 +109,16 @@
             
         </div >
     
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function avoidSpaces(event) {
     if (event.keyCode === 32) { // 32 es el código de la tecla espacio
         event.preventDefault(); // Evita que se ingrese el espacio
-        alert("La contraseña no puede contener espacios.");
+        Swal.fire({
+             title: "Error!",
+             text: "La contraseña no puede tener espacios",
+             icon: "warning"
+    });
     }
 }
         // Funciones para abrir y cerrar el modal de edición
@@ -150,7 +157,11 @@
                 fetchUsers(database);
             } catch (error) {
                 console.error("❌ Error en el registro:", error);
-                alert("Error al registrar usuario.");
+                Swal.fire({
+                title: "Error al registrar usuario.",
+                icon: 'error' // Icono de error
+                });
+
             }
         });
 
@@ -189,7 +200,10 @@
         fetchUsers(database); // Actualizar la lista de usuarios
     } catch (error) {
         console.error("❌ Error al actualizar usuario:", error);
-        alert("Error al actualizar el usuario.");
+        Swal.fire({
+                title: "Error al actualizar usuario.",
+                icon: 'error' // Icono de error
+                });
     }
 });
 
@@ -221,7 +235,10 @@
                 });
             } catch (error) {
                 console.error("❌ Error al cargar usuarios:", error);
-                alert("Error al cargar la lista de usuarios.");
+                Swal.fire({
+                title: "Error al cargar usuarios.",
+                icon: 'error' // Icono de error
+                });
             }
         }
 
@@ -248,28 +265,50 @@
         openEditModal(); // Abrir el modal de edición
     } catch (error) {
         console.error("❌ Error al obtener usuario:", error);
-        alert("Error al cargar los datos del usuario.");
+        Swal.fire({
+                title: "Error al obtener usuario.",
+                icon: 'error' // Icono de error
+                });
     }
 }
 
-        // Función para eliminar un usuario
-        async function deleteUser(userId, database) {
-            if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
+async function deleteUser(userId, database) {
+    const result = await Swal.fire({
+        title: "¿Seguro que deseas eliminar este usuario?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "No, cancelar"
+    });
 
-            try {
-                const response = await fetch(`/delete-user/${userId}?database=${database}`, {
-                    method: "DELETE"
-                });
+    if (result.isConfirmed) { // Si el usuario confirma
+        try {
+            const response = await fetch(`/delete-user/${userId}?database=${database}`, {
+                method: "DELETE"
+            });
 
-                const result = await response.json();
-                alert(result.message);
-
-                fetchUsers(database);
-            } catch (error) {
-                console.error("❌ Error al eliminar usuario:", error);
-                alert("Error al eliminar el usuario.");
+            if (!response.ok) { // Verifica si la respuesta es exitosa (código 2xx)
+                const errorData = await response.json(); // Intenta obtener el mensaje de error del servidor
+                throw new Error(errorData.message || "Error al eliminar el usuario"); // Lanza el error
             }
+
+            const result = await response.json();
+            Swal.fire({
+                title: result.message,
+                icon: "success"
+            });
+
+            fetchUsers(database);
+        } catch (error) {
+            console.error("❌ Error al eliminar usuario:", error);
+            Swal.fire({
+                title: "Error",
+                text: error.message || "Error al eliminar el usuario.", // Muestra el mensaje de error
+                icon: "error"
+            });
         }
+    }
+}
 
         // Evento para cambiar la base de datos
         document.getElementById("databaseSelect").addEventListener("change", function() {
