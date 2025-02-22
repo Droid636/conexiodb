@@ -19,7 +19,7 @@ body{
 
 .context {
     width: 100%;
-    height: 100vh; /* Cubre toda la pantalla */
+    height: 100%; /* Cubre toda la pantalla */
     position: absolute;
     top: 0; /* Ajusta la posición vertical */
     left: 0;
@@ -37,7 +37,7 @@ body{
     background: #1a2e4b;  
     background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
     width: 100%;
-    height:100vh;
+    
     
    
 }
