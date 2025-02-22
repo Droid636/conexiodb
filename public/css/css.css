@@ -280,13 +280,17 @@ body{
 
   /* Estilos para la tabla */
   table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
+    max-width: 90%; /* Ajusta el ancho máximo según necesites */
+    margin: 30px auto; /* Centra el contenedor */
+    overflow: auto;
     background: #F0E4D6;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
 th, td {
