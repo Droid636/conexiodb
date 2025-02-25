@@ -112,14 +112,19 @@
     
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function avoidSpaces(event) {
-    if (event.keyCode === 32) { // 32 es el código de la tecla espacio
-        event.preventDefault(); // Evita que se ingrese el espacio
-        Swal.fire({
-             title: "Error!",
-             text: "El camppo no puede tener espacios",
-             icon: "warning"
-    });
+   function avoidSpaces(event) {
+    const inputValue = event.target.value;
+    const isPasswordField = event.target.type === "password";
+
+    if (event.keyCode === 32) { 
+        if (isPasswordField || inputValue.length === 0 || inputValue.endsWith(" ")) {
+            event.preventDefault(); 
+            Swal.fire({
+                title: "Error!",
+                text: isPasswordField ? "La contraseña no puede contener espacios." : "No se permiten espacios al inicio o al final.",
+                icon: "warning"
+            });
+        }
     }
 }
         // Funciones para abrir y cerrar el modal de edición
@@ -140,14 +145,7 @@
             const text_field = document.getElementById("text_field").value.trim(); // Obtener valor y eliminar espacios en blanco
                 const password = document.getElementById("password").value.trim();    // Obtener valor y eliminar espacios en blanco
 
-                if (text_field === "" || password === "") { // Verificar si los campos están vacíos
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Los campos Texto y Contraseña son obligatorios.",
-                        icon: "warning"
-                    });
-                    return; // Detener el envío del formulario
-                }
+                
             const formData = new FormData(this);
             const database = document.getElementById("databaseSelect").value;
             formData.append("simple_db", database);

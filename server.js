@@ -131,7 +131,7 @@ app.get("/get-user/:id", async (req, res) => {
     }
 });
 
-//actualizar modongo
+//actualizar ruta
 
 app.put("/update-user/:id", upload.single("edit_image"), async (req, res) => {
     try {
@@ -141,17 +141,8 @@ app.put("/update-user/:id", upload.single("edit_image"), async (req, res) => {
         if (database === "mysql") {
             const query = "UPDATE users SET text_field=?, password=?, image=?, date_field=?, opinion=? WHERE id=?";
             mysqlConnection.query(query, [edit_text_field, edit_password, edit_image, edit_date_field, edit_opinion, req.params.id], (err, result) => {
-                if (err) {
-                    return res.status(500).json({ 
-                        success: false, 
-                        message: "Error en MySQL: " + err.message 
-                    });
-                }
-
-                res.json({ 
-                    success: true, 
-                    message: "Usuario actualizado en MySQL" 
-                });
+                if (err) return res.status(500).json({ message: "Error en MySQL" });
+                res.json({ message: "Usuario actualizado en MySQL" });
             });
         } else if (database === "mongodb") {
             const updateData = {
@@ -161,6 +152,7 @@ app.put("/update-user/:id", upload.single("edit_image"), async (req, res) => {
                 opinion: edit_opinion
             };
 
+            // Solo actualiza la imagen si se subió una nueva
             if (edit_image) {
                 updateData.image = edit_image;
             }
@@ -172,28 +164,16 @@ app.put("/update-user/:id", upload.single("edit_image"), async (req, res) => {
             );
 
             if (!updatedUser) {
-                return res.status(404).json({ 
-                    success: false,
-                    message: "Usuario no encontrado en MongoDB" 
-                });
+                return res.status(404).json({ message: "Usuario no encontrado en MongoDB" });
             }
 
-            res.json({ 
-                success: true, 
-                message: "Usuario actualizado en MongoDB" 
-            });
+            res.json({ message: "Usuario actualizado en MongoDB", updatedUser });
         } else {
-            res.status(400).json({ 
-                success: false,
-                message: "Base de datos no especificada" 
-            });
+            res.status(400).json({ message: "Base de datos no especificada" });
         }
     } catch (error) {
         console.error("Error en la actualización:", error);
-        res.status(500).json({ 
-            success: false,
-            message: "Error interno del servidor" 
-        });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 });
 
