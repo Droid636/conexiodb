@@ -470,3 +470,20 @@ table {
     overflow-y: auto; /* Scroll vertical */
 }
 
+#searchResults {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    width: 80%;
+    margin-left: 10%;
+    z-index: 10;
+}
+
+#searchResults div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+#searchResults div:hover {
+    background-color: #f0f0f0;
+}

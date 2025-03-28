@@ -72,7 +72,46 @@ app.post("/register", upload.single("image"), async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 });
+//buscar usuario
+app.get("/search-users", async (req, res) => {
+    try {
+        const { database, search } = req.query;
+        let query = "";
+        let queryParams = [];
 
+        if (database === "mysql") {
+            if (search) {
+                query = "SELECT * FROM users WHERE text_field LIKE ?"; // Cambiar a LIKE
+                queryParams = [`%${search}%`]; // Usar comodines %
+            } else {
+                return res.json([]);
+            }
+
+            mysqlConnection.query(query, queryParams, (err, result) => {
+                if (err) {
+                    console.error("❌ Error buscando usuarios en MySQL:", err);
+                    return res.status(500).json({ message: "Error en MySQL" });
+                }
+                res.json(result);
+            });
+        } else if (database === "mongodb") {
+            let filter = {};
+            if (search) {
+                filter = { text_field: { $regex: search, $options: 'i' } }; // Regex para coincidencias parciales
+            } else {
+                return res.json([]);
+            }
+            const users = await UserModel.find(filter);
+            res.json(users);
+        } else {
+            res.status(400).json({ message: "Base de datos no especificada" });
+        }
+    } catch (error) {
+        console.error("❌ Error en el servidor:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+});
+//buscar usuario
 // 📌 Ruta para obtener usuarios y mostrarlos en la tabla
 app.get("/get-users", async (req, res) => {
     try {

@@ -48,7 +48,8 @@
                         </form>
                     </div>
     
-
+ <input type="text" id="searchInput" placeholder="Buscar usuarios..." style="width: 80%; padding: 10px; margin-bottom: 10px;">
+ <div id="searchResults"></div>
         <h2 class="liur">LISTA DE USUARIOS REGISTRADOS</h2>
     <table border="1">
         <thead>
@@ -219,6 +220,57 @@
     }
 });
 
+//buscar usuario
+async function searchUsers(database = "mysql", searchTerm = "") {
+    try {
+        const response = await fetch(`/search-users?database=${database}&search=${searchTerm}`);
+        if (!response.ok) {
+            let errorMessage = `Error al buscar usuarios: ${response.status} ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.message) {
+                    errorMessage = errorData.message;
+                }
+            } catch (jsonError) {
+            }
+            throw new Error(errorMessage);
+        }
+        const users = await response.json();
+
+        const searchResults = document.getElementById("searchResults");
+        searchResults.innerHTML = "";
+
+        if (users.length > 0) {
+            users.forEach(user => {
+                const resultItem = document.createElement("div");
+                resultItem.textContent = user.text_field;
+                resultItem.addEventListener("click", function() {
+                    document.getElementById("searchInput").value = user.text_field;
+                    searchResults.innerHTML = "";
+                });
+                searchResults.appendChild(resultItem);
+            });
+        } else {
+            const noResults = document.createElement("div");
+            noResults.textContent = "No se encontraron resultados.";
+            searchResults.appendChild(noResults);
+        }
+    } catch (error) {
+        console.error("❌ Error al buscar usuarios:", error);
+        Swal.fire({
+            title: "Error al buscar usuarios.",
+            text: error.message || "Ocurrió un error inesperado.",
+            icon: 'error'
+        });
+    }
+}
+
+document.getElementById("searchInput").addEventListener("input", function() {
+    const searchTerm = this.value;
+    const database = document.getElementById("databaseSelect").value;
+    searchUsers(database, searchTerm);
+});
+//buscar usuario
         // Función para cargar la lista de usuarios
         async function fetchUsers(database = "mysql") {
             try {
