@@ -223,7 +223,9 @@
 //buscar usuario
 async function searchUsers(database = "mysql", searchTerm = "") {
     try {
+        // Hacer la búsqueda en el servidor, pasando el término de búsqueda y la base de datos
         const response = await fetch(`/search-users?database=${database}&search=${searchTerm}`);
+        
         if (!response.ok) {
             let errorMessage = `Error al buscar usuarios: ${response.status} ${response.statusText}`;
             try {
@@ -231,23 +233,31 @@ async function searchUsers(database = "mysql", searchTerm = "") {
                 if (errorData.message) {
                     errorMessage = errorData.message;
                 }
-            } catch (jsonError) {
-            }
+            } catch (jsonError) {}
             throw new Error(errorMessage);
         }
+
         const users = await response.json();
-
         const searchResults = document.getElementById("searchResults");
-        searchResults.innerHTML = "";
+        searchResults.innerHTML = "";  // Limpiar resultados anteriores
 
+        // Verificar si hay resultados
         if (users.length > 0) {
             users.forEach(user => {
+                // Crear un elemento para cada usuario que coincida
                 const resultItem = document.createElement("div");
-                resultItem.textContent = user.text_field;
+                
+                // Mostrar todos los campos del usuario (podrías ajustar esto para mostrar solo ciertas columnas)
+                const userDisplay = Object.values(user).join(" - ");
+                resultItem.textContent = userDisplay;
+
+                // Acción al hacer clic sobre el resultado
                 resultItem.addEventListener("click", function() {
-                    document.getElementById("searchInput").value = user.text_field;
+                    // Esto puede ser modificado según lo que desees hacer al seleccionar un resultado
+                    document.getElementById("searchInput").value = userDisplay;
                     searchResults.innerHTML = "";
                 });
+
                 searchResults.appendChild(resultItem);
             });
         } else {
@@ -264,6 +274,7 @@ async function searchUsers(database = "mysql", searchTerm = "") {
         });
     }
 }
+
 
 document.getElementById("searchInput").addEventListener("input", function() {
     const searchTerm = this.value;
